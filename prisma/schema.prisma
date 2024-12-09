@@ -47,6 +47,19 @@ enum BidStatus {
   REJECTED  // 거절됨
 }
 
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PenaltyType {
+  NO_SHOW
+  LATE_PARTICIPATION
+  CANCELLATION
+  FRAUDULENT_ACTIVITY
+}
+
 model Account {
   id                 String  @id @default(cuid())
   userId             String
@@ -116,9 +129,35 @@ model User {
   inquiries     Inquiry[]
   bids          Bid[]           // 입찰 내역
   messages      Message[]       // 채팅 메시지
-
+  profileCompleteness    Int      @default(0)  // Track profile completion percentage
+  lastProfileUpdateAt    DateTime?
+  penaltyPoints          Int      @default(0)
+  reputationScore        Float    @default(100.0)
+  consecutiveCompletions Int     @default(0)
+  totalGroupPurchases    Int      @default(0)
+  successfulPurchases    Int      @default(0)
+  cancelledPurchases     Int      @default(0)
+  permissions            Json?    // Flexible permission management
+  twoFactorEnabled       Boolean  @default(false)
+  lastLoginAt            DateTime?
+  socialLinks            Json?    // Store social media links
+  identityVerified       Boolean  @default(false)
+  verificationDocuments  VerificationDocument[]
+  
   @@index([email])
   @@index([phone])
+}
+
+model VerificationDocument {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  documentType    String    // e.g., 'business_license', 'id_card'
+  documentUrl     String
+  verificationStatus VerificationStatus @default(PENDING)
+  submittedAt     DateTime  @default(now())
+  reviewedAt      DateTime?
+  reviewerNotes   String?
 }
 
 model GroupPurchase {
@@ -156,7 +195,14 @@ model GroupPurchase {
   votes       Vote[]         // 투표 목록
   messages    Message[]      // 채팅 메시지
   reviews     Review[]       // 리뷰 목록
-
+  minParticipationScore  Float?   // Minimum user reputation to join
+  maxPenaltyAllowed      Int?     // Maximum penalty points allowed for participants
+  rejectionCount         Int      @default(0)
+  successRate            Float    @default(0.0)
+  participationHistory   Json?    // Detailed log of participant actions
+  auctionRules           Json?    // Flexible auction rule configuration
+  votingThresholdOverride Boolean @default(false)
+  
   @@index([creatorId])
   @@index([status])
 }
@@ -187,7 +233,12 @@ model Bid {
   
   seller        User          @relation(fields: [sellerId], references: [id])
   groupPurchase GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
-
+  bidderReputationScore  Float?
+  competitivenessScore   Float?
+  isAnonymousBid         Boolean @default(false)
+  bidHistory             Json?   // Track bid modifications
+  disqualificationReason String?
+  
   @@index([sellerId])
   @@index([groupPurchaseId])
 }
@@ -265,4 +316,16 @@ model Message {
   @@index([userId])
   @@index([groupPurchaseId])
   @@index([createdAt])
+}
+
+model UserPenalty {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  penaltyType     PenaltyType
+  severity        Int
+  reason          String
+  startAt         DateTime  @default(now())
+  endAt           DateTime
+  isActive        Boolean   @default(true)
 }

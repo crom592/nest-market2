@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Nest Market: Advanced Group Purchase Platform
 
-## Getting Started
+## 🚀 Latest Enhancements
 
-First, run the development server:
+### User Management System
+- Enhanced profile completeness tracking
+- Advanced penalty and reputation system
+- Document verification process
+- Flexible permission management
+
+### Group Purchase Features
+- Dynamic participation eligibility
+- Advanced bidding and voting mechanisms
+- Detailed participation history tracking
+- Flexible auction rule configuration
+
+### Bidding System
+- Competitive bid scoring
+- Reputation-based bid selection
+- Detailed bid history tracking
+- Advanced bid validation
+
+## 🔑 Key Features
+
+### User Roles
+- Consumer (참새)
+- Seller (어미새)
+- Admin
+- Flexible role-based permissions
+
+### User Levels
+- Progression tracking
+- Reputation score management
+- Penalty point system
+
+### Group Purchase Workflow
+1. Creation
+2. Participant Recruitment
+3. Bidding
+4. Voting
+5. Confirmation/Cancellation
+
+## 🛡️ Security & Integrity
+
+- Two-factor authentication support
+- Identity verification process
+- Anti-fraud mechanisms
+- Detailed audit trails
+
+## 📊 Advanced Analytics
+
+- Profile completeness metrics
+- Participation success rates
+- Reputation scoring
+- Penalty tracking
+
+## 🔜 Upcoming Features
+- Delivery tracking system
+- Enhanced notification mechanisms
+- Social integration
+- Advanced reporting
+
+## 🛠️ Technical Stack
+- Next.js
+- Prisma ORM
+- TypeScript
+- PostgreSQL
+- Zod Validation
+
+## 📦 Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/nest-market.git
+
+# Install dependencies
+npm install
+
+# Set up environment variables
+cp .env.example .env
+
+# Run database migrations
+npx prisma migrate dev
+
+# Start development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🤝 Contributing
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
