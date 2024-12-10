@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '@/lib/prisma';
-import { UserRole, PenaltyType, VerificationStatus } from '@prisma/client';
+import { PenaltyType } from '@prisma/client';
 
 @Injectable()
 export class UserManagementService {

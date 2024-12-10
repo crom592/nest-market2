@@ -122,10 +122,10 @@ describe('Participating Group Purchases API', () => {
       expect(response.status).toBe(200);
       expect(data.groupPurchases).toHaveLength(2);
       expect(data.pagination.total).toBe(2);
-      expect(data.groupPurchases.map((p: any) => p.id)).toEqual(
+      expect(data.groupPurchases.map((p: unknown) => p.id)).toEqual(
         expect.arrayContaining([participating1.id, participating2.id])
       );
-      expect(data.groupPurchases.map((p: any) => p.id)).not.toContain(
+      expect(data.groupPurchases.map((p: unknown) => p.id)).not.toContain(
         nonParticipating.id
       );
     });

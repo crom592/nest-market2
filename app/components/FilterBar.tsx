@@ -1,15 +1,15 @@
-import { useState } from 'react'
-import { Button } from './ui/button'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import { useState } from "react";
+import { Button } from "./ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 
 export default function FilterBar() {
-  const [sortBy, setSortBy] = useState('latest')
-  const [category, setCategory] = useState('all')
+  const [sortBy, setSortBy] = useState("popularity");
+  const [category, setCategory] = useState("all");
 
   const handleFilter = () => {
-    // TODO: Implement actual filtering logic
-    console.log('Filtering with:', { sortBy, category })
-  }
+    console.log("Filtering with:", { sortBy, category });
+    // TODO: API 호출 로직 추가
+  };
 
   return (
     <div className="flex items-center justify-between py-4">
@@ -18,9 +18,9 @@ export default function FilterBar() {
           <SelectValue placeholder="정렬 기준" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="latest">최신순</SelectItem>
-          <SelectItem value="popular">인기순</SelectItem>
-          <SelectItem value="endingSoon">마감임박순</SelectItem>
+          <SelectItem value="popularity">인기순</SelectItem>
+          <SelectItem value="remainingTime">마감임박순</SelectItem>
+          <SelectItem value="participantCount">참여인원순</SelectItem>
         </SelectContent>
       </Select>
       <Select value={category} onValueChange={setCategory}>
@@ -36,6 +36,5 @@ export default function FilterBar() {
       </Select>
       <Button onClick={handleFilter}>필터 적용</Button>
     </div>
-  )
+  );
 }
-

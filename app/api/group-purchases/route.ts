@@ -23,8 +23,6 @@ const createGroupPurchaseSchema = z.object({
   auctionEndTime: z.string().datetime(),
 });
 
-type CreateGroupPurchaseInput = z.infer<typeof createGroupPurchaseSchema>;
-
 export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

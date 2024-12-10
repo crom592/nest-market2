@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient, UserRole, UserLevel } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import bcrypt from "bcryptjs";

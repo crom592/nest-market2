@@ -57,19 +57,6 @@ describe('Group Purchases API', () => {
       mockGetServerSession.mockResolvedValueOnce(await mockSession(user.id));
 
       // Create 15 group purchases
-      const purchases = await Promise.all(
-        Array.from({ length: 15 }, (_, i) =>
-          createTestGroupPurchase({
-            title: `Test Purchase ${i + 1}`,
-            description: 'Test Description',
-            creatorId: user.id,
-            targetPrice: 1000,
-            minParticipants: 2,
-            maxParticipants: 10,
-            endTime: new Date(Date.now() + 24 * 60 * 60 * 1000),
-          })
-        )
-      );
 
       // Request first page
       const req1 = new NextRequest(

@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator seed {
+  provider = "prisma-generator-seed"
+  output   = "./seeds"
+}
+
 enum UserRole {
   CONSUMER // 참새
   SELLER  // 어미새
@@ -58,6 +63,17 @@ enum PenaltyType {
   LATE_PARTICIPATION
   CANCELLATION
   FRAUDULENT_ACTIVITY
+}
+
+enum ProductCategory {
+  ELECTRONICS
+  HOME_APPLIANCE
+  COMMUNICATION
+  RENTAL
+  FASHION
+  FOOD
+  TRAVEL
+  ETC
 }
 
 model Account {
@@ -143,6 +159,7 @@ model User {
   socialLinks            Json?    // Store social media links
   identityVerified       Boolean  @default(false)
   verificationDocuments  VerificationDocument[]
+  penalties              UserPenalty[]
   
   @@index([email])
   @@index([phone])
@@ -202,6 +219,14 @@ model GroupPurchase {
   participationHistory   Json?    // Detailed log of participant actions
   auctionRules           Json?    // Flexible auction rule configuration
   votingThresholdOverride Boolean @default(false)
+  
+  // 카테고리 및 필터링 필드 명시적 추가
+  category     ProductCategory  @default(ETC)
+  subCategory  String?          @default("")
+  
+  popularity   Float            @default(0.0)
+  remainingTime DateTime?
+  participantCount Int           @default(0)
   
   @@index([creatorId])
   @@index([status])

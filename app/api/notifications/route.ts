@@ -73,7 +73,7 @@ export async function PATCH(request: Request) {
   }
 }
 
-export async function PUT(request: Request) {
+export async function PUT() {
   try {
     const session = await getServerSession(authOptions);
     

@@ -79,7 +79,7 @@ export class BiddingService {
   // Calculate Bid Competitiveness
   private calculateCompetitivenessScore(
     bidPrice: number, 
-    groupPurchase: any
+    groupPurchase: unknown
   ): number {
     // Complex scoring based on price, group purchase target, etc.
     const targetPrice = groupPurchase.targetPrice;
@@ -91,7 +91,7 @@ export class BiddingService {
 
   // Update Participation History
   private updateParticipationHistory(
-    currentHistory: any, 
+    currentHistory: unknown, 
     userId: string, 
     action: string
   ): string {
