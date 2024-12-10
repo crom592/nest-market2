@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "prisma:generate": "prisma generate",
+    "build": "npm run prisma:generate && next build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.705.0",
