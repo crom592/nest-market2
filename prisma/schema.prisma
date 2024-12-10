@@ -10,10 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-generator seed {
-  provider = "prisma-generator-seed"
-  output   = "./seeds"
-}
+// Commented out problematic seed generator
+// generator seed {
+//   provider = "prisma-generator-seed"
+//   output   = "./seeds"
+// }
 
 enum UserRole {
   CONSUMER // 참새
