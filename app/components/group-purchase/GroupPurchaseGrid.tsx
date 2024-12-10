@@ -149,7 +149,7 @@ export default function GroupPurchaseGrid({ purchases, isLoading = false }: Grou
       </div>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => (
             <Card key={i} className="animate-pulse">
               <div className="h-48 bg-gray-200 rounded-t-lg" />
@@ -165,7 +165,7 @@ export default function GroupPurchaseGrid({ purchases, isLoading = false }: Grou
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-6">
           <AnimatePresence>
             {sortedPurchases.map((purchase) => (
               <motion.div

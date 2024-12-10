@@ -18,7 +18,7 @@ datasource db {
 
 enum UserRole {
   CONSUMER // 참새
-  SELLER  // 어미새
+  SELLER // 어미새
   ADMIN
   USER
 }
@@ -37,20 +37,20 @@ enum UserLevel {
 }
 
 enum PurchaseStatus {
-  DRAFT       // 임시저장
-  RECRUITING  // 참여자 모집 중
-  BIDDING     // 입찰 진행 중
-  VOTING      // 투표 진행 중
-  CONFIRMED   // 낙찰 완료
+  DRAFT // 임시저장
+  RECRUITING // 참여자 모집 중
+  BIDDING // 입찰 진행 중
+  VOTING // 투표 진행 중
+  CONFIRMED // 낙찰 완료
   IN_PROGRESS // 거래 진행 중
-  COMPLETED   // 완료
-  CANCELLED   // 취소됨
+  COMPLETED // 완료
+  CANCELLED // 취소됨
 }
 
 enum BidStatus {
-  PENDING   // 입찰 중
-  ACCEPTED  // 낙찰됨
-  REJECTED  // 거절됨
+  PENDING // 입찰 중
+  ACCEPTED // 낙찰됨
+  REJECTED // 거절됨
 }
 
 enum VerificationStatus {
@@ -78,18 +78,18 @@ enum ProductCategory {
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -116,131 +116,146 @@ model VerificationToken {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  role          UserRole  @default(USER)
-  level         UserLevel @default(BEGINNER_SPARROW)
-  nickname      String?
-  phone         String?
-  businessNumber String?  @unique
-  businessLicense String?
-  participationCount Int @default(0)
-  penaltyCount Int @default(0)
-  penaltyEndTime DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  points        Int     @default(0)  // 입찰 포인트
-  bidCount      Int     @default(0)  // 입찰 횟수
-  rating        Float?  // 평점
-  accounts      Account[]
-  sessions      Session[]
-  groupPurchases GroupPurchase[] @relation("Creator")
-  participants  Participant[]
-  notifications Notification[]
-  votes         Vote[]
-  reviews       Review[]
-  inquiries     Inquiry[]
-  bids          Bid[]           // 입찰 내역
-  messages      Message[]       // 채팅 메시지
-  profileCompleteness    Int      @default(0)  // Track profile completion percentage
+  id                     String                 @id @default(cuid())
+  name                   String?
+  email                  String?                @unique
+  emailVerified          DateTime?
+  image                  String?
+  password               String?
+  role                   UserRole               @default(USER)
+  level                  UserLevel              @default(BEGINNER_SPARROW)
+  nickname               String?
+  phone                  String?
+  businessNumber         String?                @unique
+  businessLicense        String?
+  participationCount     Int                    @default(0)
+  penaltyCount           Int                    @default(0)
+  penaltyEndTime         DateTime?
+  createdAt              DateTime               @default(now())
+  updatedAt              DateTime               @updatedAt
+  points                 Int                    @default(0) // 입찰 포인트
+  bidCount               Int                    @default(0) // 입찰 횟수
+  rating                 Float? // 평점
+  accounts               Account[]
+  sessions               Session[]
+  groupPurchases         GroupPurchase[]        @relation("Creator")
+  participants           Participant[]
+  notifications          Notification[]
+  votes                  Vote[]
+  reviews                Review[]
+  inquiries              Inquiry[]
+  bids                   Bid[] // 입찰 내역
+  messages               Message[] // 채팅 메시지
+  profileCompleteness    Int                    @default(0) // Track profile completion percentage
   lastProfileUpdateAt    DateTime?
-  penaltyPoints          Int      @default(0)
-  reputationScore        Float    @default(100.0)
-  consecutiveCompletions Int     @default(0)
-  totalGroupPurchases    Int      @default(0)
-  successfulPurchases    Int      @default(0)
-  cancelledPurchases     Int      @default(0)
-  permissions            Json?    // Flexible permission management
-  twoFactorEnabled       Boolean  @default(false)
+  penaltyPoints          Int                    @default(0)
+  reputationScore        Float                  @default(100.0)
+  consecutiveCompletions Int                    @default(0)
+  totalGroupPurchases    Int                    @default(0)
+  successfulPurchases    Int                    @default(0)
+  cancelledPurchases     Int                    @default(0)
+  permissions            Json? // Flexible permission management
+  twoFactorEnabled       Boolean                @default(false)
   lastLoginAt            DateTime?
-  socialLinks            Json?    // Store social media links
-  identityVerified       Boolean  @default(false)
+  socialLinks            Json? // Store social media links
+  identityVerified       Boolean                @default(false)
   verificationDocuments  VerificationDocument[]
   penalties              UserPenalty[]
-  
+  Like                   Like[]
+
   @@index([email])
   @@index([phone])
 }
 
 model VerificationDocument {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id])
-  documentType    String    // e.g., 'business_license', 'id_card'
-  documentUrl     String
+  id                 String             @id @default(cuid())
+  userId             String
+  user               User               @relation(fields: [userId], references: [id])
+  documentType       String // e.g., 'business_license', 'id_card'
+  documentUrl        String
   verificationStatus VerificationStatus @default(PENDING)
-  submittedAt     DateTime  @default(now())
-  reviewedAt      DateTime?
-  reviewerNotes   String?
+  submittedAt        DateTime           @default(now())
+  reviewedAt         DateTime?
+  reviewerNotes      String?
 }
 
 model GroupPurchase {
-  id          String   @id @default(cuid())
-  title       String   // 공구 제목
-  description String   // 상세 설명
-  imageUrl    String?  // 이미지
-  targetPrice Float    // 목표 가격
+  id                  String  @id @default(cuid())
+  title               String // 공구 제목
+  description         String // 상세 설명
+  imageUrl            String? // 이미지
+  targetPrice         Float // 목표 가격
+  endTime             DateTime?
+  price               Float?
+  likes               Like[] // Add this line if `likes` is a relationship
   // 모집 관련
-  minParticipants Int  // 최소 참여자 수
-  maxParticipants Int  // 최대 참여자 수
-  currentParticipants Int @default(0)  // 현재 참여자 수
-  
+  minParticipants     Int // 최소 참여자 수
+  maxParticipants     Int // 최대 참여자 수
+  currentParticipants Int     @default(0) // 현재 참여자 수
+
   // 상태 관련
-  status      PurchaseStatus @default(DRAFT)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  
+  status    PurchaseStatus @default(DRAFT)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
   // 경매 관련
-  auctionStartTime DateTime?  // 입찰 시작 시간
-  auctionEndTime   DateTime?  // 입찰 마감 시간
-  
+  auctionStartTime DateTime? // 입찰 시작 시간
+  auctionEndTime   DateTime? // 입찰 마감 시간
+
   // 투표 관련
-  voteStartTime    DateTime?  // 투표 시작 시간
-  voteEndTime      DateTime?  // 투표 마감 시간
-  voteThreshold    Float     @default(0.5)  // 투표 통과 기준 (기본 50%)
-  
+  voteStartTime DateTime? // 투표 시작 시간
+  voteEndTime   DateTime? // 투표 마감 시간
+  voteThreshold Float     @default(0.5) // 투표 통과 기준 (기본 50%)
+
   // 생성자 관련
-  creatorId   String
-  creator     User     @relation("Creator", fields: [creatorId], references: [id])
+  creatorId String
+  creator   User   @relation("Creator", fields: [creatorId], references: [id])
 
   // 관계
-  participants Participant[]  // 참여자 목록
-  bids        Bid[]          // 입찰 목록
-  votes       Vote[]         // 투표 목록
-  messages    Message[]      // 채팅 메시지
-  reviews     Review[]       // 리뷰 목록
-  minParticipationScore  Float?   // Minimum user reputation to join
-  maxPenaltyAllowed      Int?     // Maximum penalty points allowed for participants
-  rejectionCount         Int      @default(0)
-  successRate            Float    @default(0.0)
-  participationHistory   Json?    // Detailed log of participant actions
-  auctionRules           Json?    // Flexible auction rule configuration
-  votingThresholdOverride Boolean @default(false)
-  
+  participants            Participant[] // 참여자 목록
+  bids                    Bid[] // 입찰 목록
+  votes                   Vote[] // 투표 목록
+  messages                Message[] // 채팅 메시지
+  reviews                 Review[] // 리뷰 목록
+  minParticipationScore   Float? // Minimum user reputation to join
+  maxPenaltyAllowed       Int? // Maximum penalty points allowed for participants
+  rejectionCount          Int           @default(0)
+  successRate             Float         @default(0.0)
+  participationHistory    Json? // Detailed log of participant actions
+  auctionRules            Json? // Flexible auction rule configuration
+  votingThresholdOverride Boolean       @default(false)
+
   // 카테고리 및 필터링 필드 명시적 추가
-  category     ProductCategory  @default(ETC)
-  subCategory  String?          @default("")
-  
-  popularity   Float            @default(0.0)
-  remainingTime DateTime?
-  participantCount Int           @default(0)
-  
+  category    ProductCategory @default(ETC)
+  subCategory String?         @default("")
+
+  popularity       Float     @default(0.0)
+  remainingTime    DateTime?
+  participantCount Int       @default(0)
+
   @@index([creatorId])
   @@index([status])
 }
 
-model Participant {
+model Like {
   id              String   @id @default(cuid())
+  groupPurchaseId String
+  userId          String
+  groupPurchase   GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
+
+  @@index([groupPurchaseId])
+  @@index([userId])
+}
+
+model Participant {
+  id              String        @id @default(cuid())
   userId          String
   groupPurchaseId String
-  joinedAt        DateTime @default(now())
-  
-  user          User          @relation(fields: [userId], references: [id])
-  groupPurchase GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
+  joinedAt        DateTime      @default(now())
+  status          String        @default("PENDING") // Add a default value
+  user            User          @relation(fields: [userId], references: [id])
+  groupPurchase   GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
 
   @@unique([userId, groupPurchaseId])
   @@index([userId])
@@ -248,23 +263,23 @@ model Participant {
 }
 
 model Bid {
-  id              String    @id @default(cuid())
-  price           Int       // 입찰 가격
-  description     String    // 입찰 설명
-  status          BidStatus @default(PENDING)
-  createdAt       DateTime  @default(now())
-  
-  sellerId        String    // 판매자 ID
-  groupPurchaseId String    // 공구 ID
-  
-  seller        User          @relation(fields: [sellerId], references: [id])
-  groupPurchase GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
+  id          String    @id @default(cuid())
+  price       Int // 입찰 가격
+  description String // 입찰 설명
+  status      BidStatus @default(PENDING)
+  createdAt   DateTime  @default(now())
+
+  sellerId        String // 판매자 ID
+  groupPurchaseId String // 공구 ID
+
+  seller                 User          @relation(fields: [sellerId], references: [id])
+  groupPurchase          GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
   bidderReputationScore  Float?
   competitivenessScore   Float?
-  isAnonymousBid         Boolean @default(false)
-  bidHistory             Json?   // Track bid modifications
+  isAnonymousBid         Boolean       @default(false)
+  bidHistory             Json? // Track bid modifications
   disqualificationReason String?
-  
+
   @@index([sellerId])
   @@index([groupPurchaseId])
 }
@@ -284,12 +299,12 @@ model Vote {
 }
 
 model Review {
-  id              String        @id @default(cuid())
-  content         String
-  rating          Int
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  
+  id        String   @id @default(cuid())
+  content   String
+  rating    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   userId          String
   user            User          @relation(fields: [userId], references: [id])
   groupPurchaseId String
@@ -300,42 +315,42 @@ model Review {
 }
 
 model Inquiry {
-  id              String        @id @default(cuid())
-  title           String
-  content         String
-  answer          String?
-  isAnswered      Boolean       @default(false)
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  
-  userId          String
-  user            User          @relation(fields: [userId], references: [id])
+  id         String   @id @default(cuid())
+  title      String
+  content    String
+  answer     String?
+  isAnswered Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
 
 model Notification {
-  id              String        @id @default(cuid())
-  userId          String
-  type            String
-  message         String
-  isRead          Boolean       @default(false)
-  createdAt       DateTime      @default(now())
-  
-  user            User          @relation(fields: [userId], references: [id])
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([createdAt])
 }
 
 model Message {
-  id              String        @id @default(cuid())
-  content         String
-  createdAt       DateTime      @default(now())
-  
-  userId          String
-  user            User          @relation(fields: [userId], references: [id])
-  
+  id        String   @id @default(cuid())
+  content   String
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
   groupPurchaseId String
   groupPurchase   GroupPurchase @relation(fields: [groupPurchaseId], references: [id])
 
@@ -345,13 +360,23 @@ model Message {
 }
 
 model UserPenalty {
-  id              String    @id @default(cuid())
-  userId          String
-  user            User      @relation(fields: [userId], references: [id])
-  penaltyType     PenaltyType
-  severity        Int
-  reason          String
-  startAt         DateTime  @default(now())
-  endAt           DateTime
-  isActive        Boolean   @default(true)
+  id          String      @id @default(cuid())
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  penaltyType PenaltyType
+  severity    Int
+  reason      String
+  startAt     DateTime    @default(now())
+  endAt       DateTime
+  isActive    Boolean     @default(true)
+}
+
+model FAQ {
+  id        String   @id @default(cuid())
+  category  String // GROUP_PURCHASE, GENERAL_USER, SELLER, SERVICE, TECHNICAL
+  question  String
+  answer    String   @db.Text
+  priority  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

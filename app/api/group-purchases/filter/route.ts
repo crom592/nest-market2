@@ -27,16 +27,33 @@ export async function GET(request: NextRequest) {
     });
 
     // Prisma에서 조건에 따라 데이터 가져오기
-    const groupPurchases = await prisma.groupPurchase.findMany({
-      where: params.category ? { category: params.category } : {},
-      orderBy: params.sortBy === 'popularity'
-        ? { popularity: 'desc' }
-        : params.sortBy === 'remainingTime'
-        ? { remainingTime: 'asc' }
-        : { participantCount: 'desc' },
-      skip: (params.page - 1) * params.pageSize,
-      take: params.pageSize,
-    });
+    const where = {
+      ...(params.category && { category: params.category }),
+    };
+
+    const orderBy = (() => {
+      switch (params.sortBy) {
+        case 'popularity':
+          return { popularity: params.order };
+        case 'remainingTime':
+          return { endTime: params.order }; // Prisma 필드에 맞게 수정
+        case 'participantCount':
+          return { participantCount: params.order };
+        case 'price':
+          return { price: params.order };
+        default:
+          return { popularity: 'desc' }; // 기본 정렬 기준
+      }
+    })();
+
+    const [groupPurchases, total] = await Promise.all([
+      prisma.groupPurchase.findMany({
+        where,
+        orderBy, // Corrected
+        skip: (params.page - 1) * params.pageSize,
+        take: params.pageSize, // Corrected
+      }),
+    ]);
 
     return NextResponse.json({ data: groupPurchases });
   } catch (error) {
