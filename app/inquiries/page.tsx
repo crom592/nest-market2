@@ -1,13 +1,21 @@
+'use client';
+
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { Metadata } from 'next';
 import InquiryList from '@/components/inquiry/InquiryList';
 import CreateInquiryButton from '@/components/inquiry/CreateInquiryButton';
 
-export const metadata: Metadata = {
-  title: '문의하기 - Nest Market',
-  description: 'Nest Market에 대한 문의사항을 등록하고 답변을 받아보세요.',
-};
+export const dynamic = 'force-dynamic';
 
-export default function InquiriesPage() {
+export default async function InquiriesPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect('/auth/signin');
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto">
