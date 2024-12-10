@@ -62,14 +62,14 @@ export default function GroupPurchaseList() {
   }
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-2">
       {/* Navigation Tabs */}
       <nav className="flex space-x-1 border-b border-gray-200 mb-6">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 text-sm font-medium ${
+            className={`px-2 py-2 text-sm font-medium ${
               activeTab === tab.id
                 ? 'text-purple-600 border-b-2 border-purple-600'
                 : 'text-gray-500 hover:text-gray-700'
