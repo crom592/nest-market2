@@ -17,7 +17,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <main className="max-w-7xl mx-auto px-4 py-6">
+      <main className="max-w-screen-sm mx-auto px-4">
         {children}
       </main>
     </div>

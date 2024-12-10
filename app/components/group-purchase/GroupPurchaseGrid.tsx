@@ -142,49 +142,67 @@ const GroupPurchaseGrid: React.FC<GroupPurchaseGridProps> = ({ purchases, isLoad
 
   return (
     <div className="w-full">
-      {/* Search and Filter Section */}
-      <div className="mb-6 space-y-4">
-        {/* Category Navigation */}
-        <nav className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-hide">
-          {CATEGORIES.map((category) => {
-            const CategoryIcon = category.icon;
-            return (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`flex items-center px-4 py-2 rounded-full transition-colors ${
-                  selectedCategory === category.id
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <CategoryIcon className="h-4 w-4 mr-2" />
-                {category.name}
-              </button>
-            );
-          })}
-        </nav>
+      {/* Category Navigation */}
+      <div className="mb-4">
+        <div className="flex flex-col space-y-3">
+          {/* Main Categories */}
+          <div className="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-hide">
+            {CATEGORIES.map((category) => {
+              const CategoryIcon = category.icon;
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`flex items-center px-4 py-1.5 rounded-full transition-colors whitespace-nowrap text-sm ${
+                    selectedCategory === category.id
+                      ? 'bg-[#8046F1] text-white'
+                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <CategoryIcon className="h-3.5 w-3.5 mr-1.5" />
+                  {category.name}
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Sort Options */}
-        <div className="flex justify-end">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as keyof typeof SORT_OPTIONS)}
-            className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-          >
-            {Object.entries(SORT_OPTIONS).map(([key, value]) => (
-              <option key={key} value={key}>
-                {value.name}
-              </option>
-            ))}
-          </select>
+          {/* Sub Navigation */}
+          <div className="flex items-center justify-between border-b">
+            <div className="flex space-x-4 overflow-x-auto scrollbar-hide">
+              <button className={`pb-2 text-xs font-medium border-b-2 whitespace-nowrap ${selectedCategory === 'all' ? 'text-[#8046F1] border-[#8046F1]' : 'text-gray-500 border-transparent'}`}>
+                전체
+              </button>
+              <button className={`pb-2 text-xs font-medium border-b-2 whitespace-nowrap ${selectedCategory === 'ongoing' ? 'text-[#8046F1] border-[#8046F1]' : 'text-gray-500 border-transparent'}`}>
+                진행중인 공구
+              </button>
+              <button className={`pb-2 text-xs font-medium border-b-2 whitespace-nowrap ${selectedCategory === 'completed' ? 'text-[#8046F1] border-[#8046F1]' : 'text-gray-500 border-transparent'}`}>
+                완료된 공구
+              </button>
+              <button className={`pb-2 text-xs font-medium border-b-2 whitespace-nowrap ${selectedCategory === 'mypage' ? 'text-[#8046F1] border-[#8046F1]' : 'text-gray-500 border-transparent'}`}>
+                마이페이지
+              </button>
+            </div>
+
+            {/* Sort Options */}
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as keyof typeof SORT_OPTIONS)}
+              className="px-2 py-1 text-xs border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#8046F1]"
+            >
+              {Object.entries(SORT_OPTIONS).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {value.name}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
       {/* Product Grid */}
-      <div className="grid grid-cols-2 gap-4 px-4">
+      <div className="grid grid-cols-2 gap-3">
         {processedPurchases.map((purchase) => (
-          <div key={purchase.id} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-100">
+          <div key={purchase.id} className="bg-white rounded-lg shadow-sm overflow-hidden">
             {/* Product Image */}
             <div className="relative aspect-square w-full group">
               <Image
@@ -194,38 +212,38 @@ const GroupPurchaseGrid: React.FC<GroupPurchaseGridProps> = ({ purchases, isLoad
                 objectFit="cover"
                 className="bg-gray-50"
               />
-              <div className="absolute top-2 right-2 flex gap-2">
-                <button className="p-2 rounded-full bg-white/80 hover:bg-white shadow-sm">
-                  <Heart className={`h-5 w-5 ${purchase.wishlistCount ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
+              <div className="absolute top-2 right-2 flex gap-1.5">
+                <button className="p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm">
+                  <Heart className={`h-4 w-4 ${purchase.wishlistCount ? 'fill-red-500 text-red-500' : 'text-gray-600'}`} />
                 </button>
-                <button className="p-2 rounded-full bg-white/80 hover:bg-white shadow-sm">
-                  <Share2 className="h-5 w-5 text-gray-600" />
+                <button className="p-1.5 rounded-full bg-white/80 hover:bg-white shadow-sm">
+                  <Share2 className="h-4 w-4 text-gray-600" />
                 </button>
               </div>
             </div>
 
             {/* Product Info */}
-            <div className="p-4 space-y-3">
+            <div className="p-3 space-y-2">
               {/* Title */}
-              <h3 className="text-base font-medium text-gray-900 leading-tight line-clamp-2">
+              <h3 className="text-sm font-medium text-gray-900 leading-tight line-clamp-2">
                 {purchase.title}
               </h3>
 
               {/* Price and Support Amount */}
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 <div className="flex items-baseline gap-1">
-                  <span className="text-[#FF4B50] font-bold text-base">
+                  <span className="text-[#FF4B50] font-bold text-sm">
                     {purchase.targetPrice && purchase.currentPrice 
                       ? `${Math.round((1 - purchase.currentPrice / purchase.targetPrice) * 100)}%`
                       : '-'}
                   </span>
-                  <span className="font-bold text-lg">
+                  <span className="font-bold text-base">
                     {purchase.currentPrice ? purchase.currentPrice.toLocaleString() : purchase.targetPrice?.toLocaleString()}
                   </span>
-                  <span className="text-sm text-gray-900">원</span>
+                  <span className="text-xs text-gray-900">원</span>
                 </div>
                 {purchase.supportAmount && (
-                  <div className="text-sm text-purple-600 font-medium">
+                  <div className="text-xs text-purple-600 font-medium">
                     + {purchase.supportAmount.toLocaleString()}원 지원
                   </div>
                 )}
@@ -233,7 +251,7 @@ const GroupPurchaseGrid: React.FC<GroupPurchaseGridProps> = ({ purchases, isLoad
 
               {/* Progress Bar */}
               <div className="space-y-1">
-                <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-purple-500 rounded-full"
                     style={{ 
@@ -241,27 +259,27 @@ const GroupPurchaseGrid: React.FC<GroupPurchaseGridProps> = ({ purchases, isLoad
                     }}
                   />
                 </div>
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between text-[10px] text-gray-500">
                   <span className="flex items-center">
-                    <Users className="h-3.5 w-3.5 mr-1" />
+                    <Users className="h-3 w-3 mr-0.5" />
                     {purchase.currentParticipants ?? 0}/{purchase.maxParticipants ?? '-'}명
                   </span>
                   <span className="flex items-center">
-                    <Clock className="h-3.5 w-3.5 mr-1" />
+                    <Clock className="h-3 w-3 mr-0.5" />
                     {purchase.auctionEndTime ? formatDate(purchase.auctionEndTime) : '마감 시간 미정'}
                   </span>
                 </div>
               </div>
 
               {/* Status Badges */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 {purchase.bidCount > 0 && (
-                  <span className="px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded-full">
+                  <span className="px-1.5 py-0.5 text-[10px] bg-blue-50 text-blue-600 rounded-full">
                     입찰 {purchase.bidCount}건
                   </span>
                 )}
                 {purchase.voteStatus && (
-                  <span className="px-2 py-1 text-xs bg-yellow-50 text-yellow-600 rounded-full">
+                  <span className="px-1.5 py-0.5 text-[10px] bg-yellow-50 text-yellow-600 rounded-full">
                     투표중
                   </span>
                 )}
@@ -271,7 +289,7 @@ const GroupPurchaseGrid: React.FC<GroupPurchaseGridProps> = ({ purchases, isLoad
               <Button
                 variant="secondary"
                 size="sm"
-                className="w-full bg-[#FF4B50] text-white hover:bg-[#E64447] text-sm px-4 py-2 h-10 font-medium"
+                className="w-full bg-[#FF4B50] text-white hover:bg-[#E64447] text-xs px-3 py-1.5 h-8 font-medium"
               >
                 공구 참여하기
               </Button>

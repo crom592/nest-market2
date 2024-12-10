@@ -1,0 +1,21 @@
+{
+  "name": "둥지마켓",
+  "short_name": "둥지마켓",
+  "description": "함께 모여 더 좋은 가격으로 구매하는 공동구매 플랫폼",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#8046F1",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
