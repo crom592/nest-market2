@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserRole } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import bcrypt from "bcryptjs";
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
     if (!email || !password || !name) {
       return NextResponse.json(
-        { message: "Required information is missing" },
+        { error: "이메일, 비밀번호, 이름은 필수 입력사항입니다." },
         { status: 400 }
       );
     }
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        { message: "Email already registered" },
+        { error: "이미 등록된 이메일입니다." },
         { status: 400 }
       );
     }
@@ -50,7 +50,7 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("Failed to create user:", err);
     return NextResponse.json(
-      { message: "Failed to create user account" },
+      { error: "회원가입에 실패했습니다. 다시 시도해주세요." },
       { status: 500 }
     );
   }

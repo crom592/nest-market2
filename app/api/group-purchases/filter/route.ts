@@ -1,72 +1,67 @@
-export const dynamic = 'force-dynamic';
+import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma';
 
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient, ProductCategory } from '@prisma/client';
-import { z } from 'zod';
-
-const prisma = new PrismaClient();
-
-// 필터링 스키마 정의
-const filterSchema = z.object({
-  category: z.nativeEnum(ProductCategory).nullable().optional(),
-  sortBy: z.enum(['popularity', 'remainingTime', 'participantCount']).default('popularity'),
-  page: z.number().int().min(1).default(1),
-  pageSize: z.number().int().min(1).max(100).default(10)
-});
-
-export async function GET(request: NextRequest) {
+export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-
-    // 필터 스키마 파싱 및 기본값 설정
-    const params = filterSchema.parse({
-      category: searchParams.get('category') as ProductCategory | null,
-      sortBy: searchParams.get('sortBy') || 'popularity',
-      page: parseInt(searchParams.get('page') || '1', 10),
-      pageSize: parseInt(searchParams.get('pageSize') || '10', 10),
-    });
-
-    // Prisma에서 조건에 따라 데이터 가져오기
-    const where = {
-      ...(params.category && { category: params.category }),
+    const params = {
+      page: Number(searchParams.get('page')) || 1,
+      pageSize: Number(searchParams.get('pageSize')) || 10,
+      category: searchParams.get('category') || undefined,
+      status: searchParams.get('status') || undefined,
+      sortBy: searchParams.get('sortBy') || 'createdAt',
+      order: (searchParams.get('order') || 'desc') as 'asc' | 'desc',
     };
 
-    const orderBy = (() => {
-      switch (params.sortBy) {
-        case 'popularity':
-          return { popularity: params.order };
-        case 'remainingTime':
-          return { endTime: params.order }; // Prisma 필드에 맞게 수정
-        case 'participantCount':
-          return { participantCount: params.order };
-        case 'price':
-          return { price: params.order };
-        default:
-          return { popularity: 'desc' }; // 기본 정렬 기준
-      }
-    })();
-
-    const [groupPurchases, total] = await Promise.all([
-      prisma.groupPurchase.findMany({
-        where,
-        orderBy, // Corrected
-        skip: (params.page - 1) * params.pageSize,
-        take: params.pageSize, // Corrected
-      }),
-    ]);
-
-    return NextResponse.json({ data: groupPurchases });
-  } catch (error) {
-    console.error('Error during filtering:', error);
-
-    // ZodError 처리
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: '유효하지 않은 요청입니다.', details: error.errors },
-        { status: 400 }
-      );
+    // Build where clause
+    const where: any = {};
+    if (params.category) {
+      where.category = params.category;
+    }
+    if (params.status && params.status !== 'ALL') {
+      where.status = params.status;
     }
 
-    return NextResponse.json({ error: '필터링 중 서버 오류 발생' }, { status: 500 });
+    // Build orderBy clause
+    let orderBy: any = {};
+    switch (params.sortBy) {
+      case 'popularity':
+        orderBy = { popularity: params.order };
+        break;
+      case 'timeLeft':
+        orderBy = { endTime: params.order };
+        break;
+      case 'participantCount':
+        orderBy = { participantCount: params.order };
+        break;
+      case 'price':
+        orderBy = { price: params.order };
+        break;
+      default:
+        orderBy = { createdAt: params.order };
+    }
+
+    const groupPurchases = await prisma.groupPurchase.findMany({
+      where,
+      orderBy,
+      skip: (params.page - 1) * params.pageSize,
+      take: params.pageSize,
+      include: {
+        _count: {
+          select: {
+            participants: true,
+            likes: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json(groupPurchases);
+  } catch (error) {
+    console.error('Error in group purchases filter:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch group purchases' },
+      { status: 500 }
+    );
   }
 }
