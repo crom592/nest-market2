@@ -1,13 +1,19 @@
+// app/profile/page.tsx
 'use client';
 
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Image } from 'next/image';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useNotifications } from '@/components/notifications/NotificationCenter';
 import { formatDate } from '@/lib/utils/date';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 
 interface UserStats {
   participationCount: number;
@@ -16,7 +22,7 @@ interface UserStats {
   rating: number | null;
 }
 
-const getLevelBadge = (level: string) => {
+function getLevelBadge(level: string) {
   const badges: Record<string, { text: string; color: string }> = {
     BEGINNER_SPARROW: { text: '초보참새', color: 'bg-gray-500' },
     GOOD_SPARROW: { text: '우수한참새', color: 'bg-green-500' },
@@ -31,10 +37,16 @@ const getLevelBadge = (level: string) => {
   };
 
   return badges[level] || { text: '등급없음', color: 'bg-gray-300' };
-};
+}
 
-export default function ProfilePage() {
-  const { data: session } = useSession();
+export default async function ProfilePage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    redirect('/auth/signin');
+  }
+
+  const router = useRouter();
   const { notifications } = useNotifications();
   const [userStats, setUserStats] = useState<UserStats>({
     participationCount: 0,
@@ -59,11 +71,7 @@ export default function ProfilePage() {
     }
   };
 
-  if (!session?.user) {
-    return <div>Loading...</div>;
-  }
-
-  const userLevel = (session.user as any).level || 'BEGINNER_SPARROW';
+  const userLevel = (session.user as any)?.level || 'BEGINNER_SPARROW';
   const badge = getLevelBadge(userLevel);
 
   return (

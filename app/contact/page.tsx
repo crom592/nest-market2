@@ -1,13 +1,15 @@
-import { Button } from "../components/ui/button"
-import { Input } from "../components/ui/input"
-import { Textarea } from "../components/ui/textarea"
+// app/contact/page.tsx
+'use client';
+
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
 
 export default function ContactPage() {
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // TODO: Implement actual form submission logic
-    console.log('Form submitted')
-  }
+    e.preventDefault();
+    console.log('Form submitted');
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -28,6 +30,5 @@ export default function ContactPage() {
         <Button type="submit">문의 보내기</Button>
       </form>
     </div>
-  )
+  );
 }
-

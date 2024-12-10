@@ -1,6 +1,8 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { redirect } from 'next/navigation';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -8,8 +10,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import UserManagement from '@/components/admin/UserManagement';
 import GroupPurchaseManagement from '@/components/admin/GroupPurchaseManagement';
 
-export default function AdminPage() {
-  const { data: session, status } = useSession();
+export const dynamic = 'force-dynamic';
+
+export default async function AdminPage() {
+  const session = await getServerSession(authOptions);
+
+  if (!session || (session.user as any)?.role !== 'ADMIN') {
+    redirect('/');
+  }
+
   const router = useRouter();
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -19,13 +28,6 @@ export default function AdminPage() {
   });
 
   useEffect(() => {
-    if (status === 'loading') return;
-
-    if (!session?.user || session.user.role !== 'ADMIN') {
-      router.push('/');
-      return;
-    }
-
     // Fetch admin stats
     const fetchStats = async () => {
       try {
@@ -38,19 +40,7 @@ export default function AdminPage() {
     };
 
     fetchStats();
-  }, [session, status, router]);
-
-  if (status === 'loading') {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
-  }
-
-  if (!session?.user || session.user.role !== 'ADMIN') {
-    return null;
-  }
+  }, [router]);
 
   return (
     <div className="container mx-auto px-4 py-8">
